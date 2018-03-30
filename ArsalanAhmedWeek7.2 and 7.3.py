@@ -1,5 +1,5 @@
 print('Question 7.2')
-print('We know, based on the >5 year survivors, this is Binomial Dist with parameters: N= 573 patients, q = about 0.58')
+print('We know, based on the >5 year survivors, this is Binomial Dist with parameters: N= 573 patients, p= about 0.42, q = about 0.58')
 print('\n')
 print('Question 7.3')
 import scipy.stats as stat
