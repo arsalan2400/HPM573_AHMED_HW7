@@ -208,25 +208,28 @@ print('Step 2. Set a value for TIMESTEP multiCohort.simulate(CalibSets.SUPERTIME
 #I'm just using SUPERTIMESTEP instead of TIME_STEPS here because it's from my Question 7.1 
 SUPERTIMESTEP = 100
 print('Step 3. Set the alpha =0.05 ')
-alpha = 0.05 #sig level
+ALPHA = 0.05 #sig level
 print('Step 4. Remember, there is a re-sample mortality probability (with replacement) according to likelihood weights aka size=CalibSets.NUM_SIM_COHORTS = 300 because why not')
 NUM_SIM_COHORTS = 300   # number of simulated cohorts used to calculate prediction intervals
 print('Step 5. We need to define POST_L, POST_U, POST_N values. With a 95% credible interval, 2.5% of estimates will be below the lower bound and 2.5% of the estimates above the upper bound. Aka 0.025, 0.975, 1000 in that order')
 POST_L, POST_U, POST_N = 0.025, 0.975, 1000
-print('Step 6. We need to put in our values for our clinical study. We need Obs_mean survival time and Obs_STDEV)
+print('Step 6. We need to put in our values for our clinical study. We need Obs_mean survival time and Obs_STDEV')
 
 ####the mean is easy!!!
 OBS_MEAN = 5 #the mean # of years survived
 
 ###the STDEV is tough!!!####
-OBS_STDEV =sqrt(OBS_MEAN(abs(x - x.mean())**2))
+print('To be honest, I have no idea where to begin with STDEV. I went to StatisticalClasses.py and found that you can measure Half Length. IN that formula, there is STDEV.')
+print('stdev = OBS_halflength* numpy.sqrt(OBS_N) dividedby stat.t.ppf(....). Sqrt(OBS_N) is 23.9374184072....')
+
 OBS_N = 573        # number of patients involved in the study
 OBS_MEAN = 5    
 OBS_HL = 1.5      # half-length
 OBS_ALPHA = 0.05   # significance level
-OBS_STDEV = OBS_HL / stat.t.ppf(1 - OBS_ALPHA / 2, OBS_N-1)
+import scipy.stats as stat
+OBS_STDEV = (OBS_HL*23.9374184072)/ stat.t.ppf(1 - OBS_ALPHA / 2, OBS_N-1)
 
-
+    
 #####THE SAME AS CALIBRATION PAGE#####
 calibration = Calibration()
 calibration.sample_posterior()
