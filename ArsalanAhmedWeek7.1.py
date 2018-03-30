@@ -70,13 +70,13 @@ class Cohort:
     ##just thought it'd be nice to have this.
 
 
-SUPERTIMESTEP = 1000  # this is somewhat arbitrary, how often the exp repeats
+SUPERTIMESTEP = 100  # this is somewhat arbitrary, how often the exp repeats
 # If I put timesteps to 5, no patients would survive >5 yrs.
 POPULATION = 573  # this was requested for
 
 thisCohort = Cohort(id=1, pop_size=POPULATION, deathrisk=0.1)
-#note that i've put a 10% likelihood of dying every year! Quite high!!
+#note that we've put a 10% likelihood of dying every year! Quite high!!
 thisCohort.simulate(SUPERTIMESTEP)
-print("% Patients who survived >5 years with 1000 timesteps: ", thisCohort.above5years() / POPULATION*100)
-print('The avg survival time in yrs is (for context) with 1000 timesteps... ', thisCohort.get_average_survival_time())
-print("# of Patients who survived >5 years with 1000 timesteps: ", thisCohort.above5years())
+print("% Patients who survived >5 years with 100 timesteps: ", thisCohort.above5years() / POPULATION*100)
+print('The avg survival time in yrs is (for context) with 100 timesteps... ', thisCohort.get_average_survival_time())
+print("# of Patients who survived >5 years with 100 timesteps: ", thisCohort.above5years())
