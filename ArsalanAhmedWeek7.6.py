@@ -235,5 +235,5 @@ print(txtEff)
 #an answer: 
 #Estimate of mortality probability (95% credible interval): 0.1500 (0.0533, 0.2477)
 #Effective sample size: 1000.0
-print('The answer does not change when we make it 800/1146 because the ratio is the same as 400/573.')
+print('The mortality credible interval does not change when we make it 800/1146 because the ratio is the same as 400/573.')
 #It's the same ratio!
