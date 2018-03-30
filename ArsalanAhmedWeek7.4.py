@@ -61,10 +61,7 @@ class Calibration:
             # construct a gaussian likelihood
             # with mean calculated from the simulated data and standard deviation from the clinical study.
             # evaluate this pdf (probability density function) at the mean reported in the clinical study.
-            weight = stat.norm.pdf(
-                            x=OBS_MEAN,
-                            loc=mean,
-                            scale=OBS_STDEV)
+            weight = binom._pmf(x = 400,n = 573,p=0.5863874345549738)
             # store the weight
             self._weights.append(weight)
 
@@ -215,19 +212,6 @@ print('Step 5. We need to define POST_L, POST_U, POST_N values. With a 95% credi
 POST_L, POST_U, POST_N = 0.05, 0.25, 1000
 print('Step 6. We need to put in our values for our clinical study. We need Obs_mean survival time and Obs_STDEV')
 
-####the mean is easy!!!
-OBS_MEAN = 5 #the mean # of years survived
-
-###the STDEV is tough!!!####
-print('To be honest, I have no idea where to begin with STDEV. I went to StatisticalClasses.py and found that you can measure Half Length. IN that formula, there is STDEV.')
-print('stdev = OBS_halflength* numpy.sqrt(OBS_N) dividedby stat.t.ppf(....). Sqrt(OBS_N) is 23.9374184072....')
-
-OBS_N = 573        # number of patients involved in the study
-OBS_MEAN = 5    #binom dist, so half above, half below 5 years. 
-OBS_HL = 1.5      # half-length
-OBS_ALPHA = 0.05   # significance level
-import scipy.stats as stat
-OBS_STDEV = (OBS_HL*23.9374184072)/ stat.t.ppf(1 - OBS_ALPHA / 2, OBS_N-1)
 
     
 #####THE SAME AS CALIBRATION PAGE#####
@@ -240,7 +224,7 @@ print('Estimate of mortality probability ({:.{prec}%} credible interval):'.forma
 # effective sample size
 txtEff = 'Effective sample size: {:.1f}'.format(calibration.get_effective_sample_size())
 print(txtEff)
- 
+
 ##an answer:
-##Estimate of mortality probability (95% credible interval): 0.1554 (0.0576, 0.2457)
-###Effective sample size: 996.2
+##Estimate of mortality probability (95% credible interval): 0.1500 (0.0533, 0.2477)
+##Effective sample size: 1000.0
