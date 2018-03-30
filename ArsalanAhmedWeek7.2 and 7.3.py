@@ -1,6 +1,6 @@
 print('Question 7.2')
-print('We know, based on the >5 year survivors, this is Binomial Dist with parameters: n=573, p=0.5)
-#one run gave me 0.5863874345549738; we'll go with it. 
+print('We know, based on the >5 year survivors, this is Binomial Dist with parameters: n=573, p=0.41)
+      #q = one run gave me 0.5863874345549738; we'll go with it. 
 print('\n')
 print('Question 7.3')
 import scipy.stats as stat
