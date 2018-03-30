@@ -1,5 +1,5 @@
 print('Question 7.2')
-print('We know, based on the >5 year survivors, this is Binomial Dist with parameters: N= 573 patients, p= about 0.42, q = about 0.58')
+print('We know, based on the >5 year survivors, this is Binomial Dist with parameters: N= 573 patients, p= about 0.41, q = about 0.59')
 #one run gave me 0.5863874345549738; we'll go with it. 
 print('\n')
 print('Question 7.3')
