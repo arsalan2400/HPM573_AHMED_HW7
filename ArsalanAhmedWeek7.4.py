@@ -223,7 +223,7 @@ print('To be honest, I have no idea where to begin with STDEV. I went to Statist
 print('stdev = OBS_halflength* numpy.sqrt(OBS_N) dividedby stat.t.ppf(....). Sqrt(OBS_N) is 23.9374184072....')
 
 OBS_N = 573        # number of patients involved in the study
-OBS_MEAN = 5    
+OBS_MEAN = 5    #binom dist, so half above, half below 5 years. 
 OBS_HL = 1.5      # half-length
 OBS_ALPHA = 0.05   # significance level
 import scipy.stats as stat
@@ -240,8 +240,7 @@ print('Estimate of mortality probability ({:.{prec}%} credible interval):'.forma
 # effective sample size
 txtEff = 'Effective sample size: {:.1f}'.format(calibration.get_effective_sample_size())
 print(txtEff)
-
-##Note.... We are not changing the weight here to fit Binom of the clinical study.  
+ 
 ##an answer:
 ##Estimate of mortality probability (95% credible interval): 0.1554 (0.0576, 0.2457)
 ###Effective sample size: 996.2
