@@ -61,7 +61,10 @@ class Calibration:
             # construct a gaussian likelihood
             # with mean calculated from the simulated data and standard deviation from the clinical study.
             # evaluate this pdf (probability density function) at the mean reported in the clinical study.
-            weight = binom._pmf(x = 400,n = 573,p=0.5863874345549738)
+            weight = stat.norm.pdf(
+                            x=OBS_MEAN,
+                            loc=mean,
+                            scale=OBS_STDEV)
             # store the weight
             self._weights.append(weight)
 
@@ -238,7 +241,7 @@ print('Estimate of mortality probability ({:.{prec}%} credible interval):'.forma
 txtEff = 'Effective sample size: {:.1f}'.format(calibration.get_effective_sample_size())
 print(txtEff)
 
-
-###Answer:
-###Estimate of mortality probability (95% credible interval): 0.1500 (0.0533, 0.2477)
-###Effective sample size: 1000.0
+##Note.... We are not changing the weight here to fit Binom of the clinical study.  
+##an answer:
+##Estimate of mortality probability (95% credible interval): 0.1554 (0.0576, 0.2457)
+###Effective sample size: 996.2
