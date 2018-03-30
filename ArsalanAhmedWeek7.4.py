@@ -61,10 +61,7 @@ class Calibration:
             # construct a gaussian likelihood
             # with mean calculated from the simulated data and standard deviation from the clinical study.
             # evaluate this pdf (probability density function) at the mean reported in the clinical study.
-            weight = stat.norm.pdf(
-                            x=OBS_MEAN,
-                            loc=mean,
-                            scale=OBS_STDEV)
+            weight = binom._pmf(x = 400,n = 573,p=0.5863874345549738)
             # store the weight
             self._weights.append(weight)
 
@@ -212,7 +209,7 @@ ALPHA = 0.05 #sig level
 print('Step 4. Remember, there is a re-sample mortality probability (with replacement) according to likelihood weights aka size=CalibSets.NUM_SIM_COHORTS = 300 because why not')
 NUM_SIM_COHORTS = 300   # number of simulated cohorts used to calculate prediction intervals
 print('Step 5. We need to define POST_L, POST_U, POST_N values. With a 95% credible interval, 2.5% of estimates will be below the lower bound and 2.5% of the estimates above the upper bound. Aka 0.025, 0.975, 1000 in that order')
-POST_L, POST_U, POST_N = 0.025, 0.975, 1000
+POST_L, POST_U, POST_N = 0.05, 0.25, 1000
 print('Step 6. We need to put in our values for our clinical study. We need Obs_mean survival time and Obs_STDEV')
 
 ####the mean is easy!!!
