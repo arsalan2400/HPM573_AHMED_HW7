@@ -61,7 +61,7 @@ class Calibration:
             # construct a gaussian likelihood
             # with mean calculated from the simulated data and standard deviation from the clinical study.
             # evaluate this pdf (probability density function) at the mean reported in the clinical study.
-            weight = binom._pmf(x = 400,n = 573,p=0.5863874345549738)
+            weight = binom._pmf(x = 400,n = 573,p=0.5)
             # store the weight
             self._weights.append(weight)
 
