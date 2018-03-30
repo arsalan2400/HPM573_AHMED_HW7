@@ -237,3 +237,8 @@ print('Estimate of mortality probability ({:.{prec}%} credible interval):'.forma
 # effective sample size
 txtEff = 'Effective sample size: {:.1f}'.format(calibration.get_effective_sample_size())
 print(txtEff)
+
+
+###Answer:
+###Estimate of mortality probability (95% credible interval): 0.1500 (0.0533, 0.2477)
+###Effective sample size: 1000.0
