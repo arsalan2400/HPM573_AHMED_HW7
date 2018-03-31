@@ -92,6 +92,7 @@ class Calibration:
 
         # write the calibration result into a csv file
         InOutSupport.write_csv('CalibrationResults.csv', self._csvRows)
+        
 
 
 
@@ -205,35 +206,38 @@ class CalibratedModel:
         
     
 ####NOW WE JUST NEED TO SET VALUES FOR ALL THESE INPUTS!!!!!#####
-print('Things we need to know....')
-print('Step 1. define the SIM_POP_SIZE in multi cohort = 1000.')
+#'Things we need to know....')
+#'Step 1. define the SIM_POP_SIZE in multi cohort = 1000.')
 SIM_POP_SIZE = 1000     # population size of the simulated cohort
-print('Step 2. Set a value for TIMESTEP multiCohort.simulate(CalibSets.SUPERTIMESTEP =100.')
+#'Step 2. Set a value for TIMESTEP multiCohort.simulate(CalibSets.SUPERTIMESTEP =100.')
 #I'm just using SUPERTIMESTEP instead of TIME_STEPS here because it's from my Question 7.1 
 SUPERTIMESTEP = 100
-print('Step 3. Set the alpha =0.05 ')
+#Step 3. Set the alpha =0.05 ')
 ALPHA = 0.05 #sig level
-print('Step 4. Remember, there is a re-sample mortality probability (with replacement) according to likelihood weights aka size=CalibSets.NUM_SIM_COHORTS = 300 because why not')
+#'Step 4. Remember, there is a re-sample mortality probability (with replacement) according to likelihood weights aka size=CalibSets.NUM_SIM_COHORTS = 300 because why not')
 NUM_SIM_COHORTS = 300   # number of simulated cohorts used to calculate prediction intervals
-print('Step 5. Set upper and lower limit. 0.05 and 0.25 is reasonable')
+#'Step 5. Set upper and lower limit. 0.05 and 0.25 is reasonable')
 POST_L, POST_U, POST_N = 0.05, 0.25, 1000
-print('Step 6. We need to put in our values for our clinical study. We need Obs_mean survival time and Obs_STDEV')
+#'Step 6. We need to put in our values for our clinical study. We need Obs_mean survival time and Obs_STDEV')
 
 
-    
-#####THE SAME AS CALIBRATION PAGE#####
-calibration = Calibration()
-calibration.sample_posterior()
-print('\n')
-# Estimate of mortality probability and the posterior interval
-print('Estimate of mortality probability ({:.{prec}%} credible interval):'.format(1-ALPHA, prec=0),
+print('The estimate of new mortality probability ({:.{prec}%} credible interval):'.format(1-ALPHA, prec=0),
       calibration.get_mortality_estimate_credible_interval(ALPHA, 4))
-# effective sample size
-txtEff = 'Effective sample size: {:.1f}'.format(calibration.get_effective_sample_size())
-print(txtEff)
+#an answer:
+#Estimate of new mortality probability (95% credible interval): 0.1500 (0.0533, 0.2477)
+#note that the range is smaller. 
+print('The credible interval of the estimated annual mortality is smaller. Possibly due to more confidence w larger #s.')
 
+this_calibrated_model= CalibratedModel('CalibrationResults.csv')
+this_calibrated_model.simulate(NUM_SIM_COHORTS,SIM_POP_SIZE, SUPERTIMESTEP)
+print('The new mean survival time and {:.{prec}%} projection interval:'.format(1 - ALPHA, prec=0),
+      this_calibrated_model.get_mean_survival_time_proj_interval(ALPHA, deci=4))
+print('The proj interval the mean survival time is smaller. Possibly due to more confidence w larger #s.')
 #an answer: 
-#Estimate of mortality probability (95% credible interval): 0.1500 (0.0533, 0.2477)
-#Effective sample size: 1000.0
-print('The mortality credible interval does not change when we make it 800/1146 because the ratio is the same as 400/573.')
-#It's the same ratio!
+#E.g. The new mean survival time and 95% projection interval: 8.1106 (4.0057, 18.1507).
+
+#a complete answer:
+#The estimate of new mortality probability (95% credible interval): 0.1500 (0.0533, 0.2477)
+#The credible interval of the estimated annual mortality is smaller. Possibly due to more confidence w larger #s.
+#The new mean survival time and 95% projection interval: 7.9504 (4.1620, 17.9836)
+#The proj interval the mean survival time is smaller. Possibly due to more confidence w larger #s.
