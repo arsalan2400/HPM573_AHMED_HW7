@@ -240,4 +240,4 @@ print('The proj interval the mean survival time is smaller. Possibly due to more
 #The estimate of new mortality probability (95% credible interval): 0.1500 (0.0533, 0.2477)
 #The credible interval of the estimated annual mortality is smaller. Possibly due to more confidence w larger #s.
 #The new mean survival time and 95% projection interval: 7.9504 (4.1620, 17.9836)
-#The proj interval the mean survival time is slightly smaller. Possibly due to more confidence w larger #s.
+#The proj interval the mean survival time is slightly smaller though I am not sure. It may not be affected? Possibly due to more confidence w larger #s.
