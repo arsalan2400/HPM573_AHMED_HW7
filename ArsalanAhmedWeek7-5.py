@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Mar 30 19:44:39 2018
+Created on Fri Mar 30 20:22:26 2018
 
+@author: Aslan
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Mar 30 19:44:39 2018
 @author: Aslan
 """
 
@@ -228,4 +235,4 @@ print('The mean survival time and {:.{prec}%} projection interval is...:'.format
       this_calibrated_model.get_mean_survival_time_proj_interval(ALPHA, deci=4), "\n")
 
 ##an answer:
-##The Mean survival time and 95% projection interval is....: 7.8710 (4.0160, 18.8034) 
+##The Mean survival time and 95% projection interval is....: 7.8046 (4.0830, 17.8639)  
