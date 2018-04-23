@@ -1,13 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Feb 14 08:29:32 2018
-
-@author: Aslan
-"""
-
 from enum import Enum
 import numpy as np
+import SamplePathClasses as PathCls
+import StatisticalClasses as Stat
 
 
 class HealthStat(Enum):
@@ -16,21 +10,19 @@ class HealthStat(Enum):
     DEAD = 0
 
 
-class Patient(object):
+class Patient:
     def __init__(self, id, mortality_prob):
         """ initiates a patient
         :param id: ID of the patient
         :param mortality_prob: probability of death during a time-step (must be in [0,1])
         """
         self._id = id
+        self._rnd = np.random       # random number generator for this patient
+        self._rnd.seed(self._id)    # specifying the seed of random number generator for this patient
+
         self._mortalityProb = mortality_prob
         self._healthState = HealthStat.ALIVE  # assuming all patients are alive at the beginning
         self._survivalTime = 0
-            #we dont want anyone outside the patient to do it; that sim determines the task/ how many yrs the patient survives
-
-        #this helps us set the Alive/ Dead. By traition you want to capitalize vars
-        #show these are enumerations and you can define them
-    myPatient = Paitent(id=1, mortability<prob=0.1)
 
     def simulate(self, n_time_steps):
         """ simulate the patient over the specified simulation length """
@@ -39,9 +31,8 @@ class Patient(object):
 
         # while the patient is alive and simulation length is not yet reached
         while self._healthState == HealthStat.ALIVE and t < n_time_steps:
-            #the point is to project the next time step; time 10 = projecting what's at time 11 b/c its alreay reached
             # determine if the patient will die during this time-step
-            if np.random.sample() < self._mortalityProb:
+            if self._rnd.sample() < self._mortalityProb:
                 self._healthState = HealthStat.DEAD
                 self._survivalTime = t + 1  # assuming deaths occurs at the end of this period
 
@@ -50,7 +41,13 @@ class Patient(object):
 
     def get_survival_time(self):
         """ returns the patient survival time """
-        return self._survivalTime
+
+        # return survival time only if the patient has died
+        if self._healthState == HealthStat.DEAD:
+            return self._survivalTime
+        else:
+            return None
+
 
 class Cohort:
     def __init__(self, id, pop_size, mortality_prob):
@@ -59,23 +56,23 @@ class Cohort:
         :param pop_size: population size of this cohort
         :param mortality_prob: probability of death for each patient in this cohort over a time-step (must be in [0,1])
         """
+        self._initialPopSize = pop_size # initial population size
         self._patients = []      # list of patients
-        self._survivalTimes = []  # list to store survival time of each patient
+        self._survivalTimes = []    # list to store survival time of each patient
 
         # populate the cohort
-        n = 1    # current population size
-        while n <= pop_size:
+        for i in range(pop_size):
             # create a new patient (use id * pop_size + n as patient id)
-            patient = Patient(id * pop_size + n, mortality_prob)
+            patient = Patient(id * pop_size + i, mortality_prob)
             # add the patient to the cohort
             self._patients.append(patient)
-            # increase the population size
-            n += 1
 
     def simulate(self, n_time_steps):
         """ simulate the cohort of patients over the specified number of time-steps
         :param n_time_steps: number of time steps to simulate the cohort
+        :returns simulation outputs from simulating this cohort
         """
+
         # simulate all patients
         for patient in self._patients:
             # simulate
@@ -85,6 +82,123 @@ class Cohort:
             if not (value is None):
                 self._survivalTimes.append(value)
 
+        # return cohort outcomes for this simulated class
+        return CohortOutcomes(self)
+
+    def get_survival_times(self):
+        """ :returns the survival times of the patients in this cohort"""
+        return self._survivalTimes
+
+    def get_initial_pop_size(self):
+        """ :returns the initial population size of this cohort"""
+        return self._initialPopSize
+
+
+class CohortOutcomes:
+    def __init__(self, simulated_cohort):
+        """ extracts outcomes of a simulated cohort
+        :param simulated_cohort: a cohort after being simulated"""
+
+        self._simulatedCohort = simulated_cohort
+
+        # summary statistics on survival times
+        self._sumStat_patientSurvivalTimes = \
+            Stat.SummaryStat('Patient survival times', self._simulatedCohort.get_survival_times())
+
     def get_ave_survival_time(self):
         """ returns the average survival time of patients in this cohort """
-        return sum(self._survivalTimes)/len(self._survivalTimes)
+        return self._sumStat_patientSurvivalTimes.get_mean()
+
+    def get_CI_survival_time(self, alpha):
+        """
+        :param alpha: confidence level
+        :return: t-based confidence interval
+        """
+        return self._sumStat_patientSurvivalTimes.get_t_CI(alpha)
+
+    def get_survival_curve(self):
+        """ returns the sample path for the number of living patients over time """
+
+        # find the initial population size
+        n_pop = self._simulatedCohort.get_initial_pop_size()
+        # sample path (number of alive patients over time)
+        n_living_patients = PathCls.SamplePathBatchUpdate('# of living patients', 0, n_pop)
+
+        # record the times of deaths
+        for obs in self._simulatedCohort.get_survival_times():
+            n_living_patients.record(time=obs, increment=-1)
+
+        return n_living_patients
+
+    def get_survival_times(self):
+        """ :returns the survival times of the patients in this cohort"""
+        return self._simulatedCohort.get_survival_times()
+
+
+class MultiCohort:
+    """ simulates multiple cohorts with different parameters """
+
+    def __init__(self, ids, pop_sizes, mortality_probs):
+        """
+        :param ids: a list of ids for cohorts to simulate
+        :param pop_sizes: a list of population sizes of cohorts to simulate
+        :param mortality_probs: a list of the mortality probabilities
+        """
+        self._ids = ids
+        self._popSizes = pop_sizes
+        self._mortalityProbs = mortality_probs
+
+        self._survivalTimes = []      # two dimensional list of patient survival time from each simulated cohort
+        self._meanSurvivalTimes = []   # list of mean patient survival time for each simulated cohort
+        self._sumStat_meanSurvivalTime = None
+
+    def simulate(self, n_time_steps):
+        """ simulates all cohorts """
+
+        for i in range(len(self._ids)):
+            # create a cohort
+            cohort = Cohort(self._ids[i], self._popSizes[i], self._mortalityProbs[i])
+            # simulate the cohort
+            output = cohort.simulate(n_time_steps)
+            # store all patient surival times from this cohort
+            self._survivalTimes.append(cohort.get_survival_times())
+            # store average survival time for this cohort
+            self._meanSurvivalTimes.append(output.get_ave_survival_time())
+
+        # after simulating all cohorts
+        # summary statistics of mean survival time
+        self._sumStat_meanSurvivalTime = Stat.SummaryStat('Mean survival time', self._meanSurvivalTimes)
+
+    def get_cohort_mean_survival(self, cohort_index):
+        """ returns the mean survival time of an specified cohort
+        :param cohort_index: integer over [0, 1, ...] corresponding to the 1st, 2ndm ... simulated cohort
+        """
+        return self._meanSurvivalTimes[cohort_index]
+
+    def get_cohort_CI_mean_survival(self, cohort_index, alpha):
+        """ :returns: the confidence interval of the mean survival time for a specified cohort
+        :param cohort_index: integer over [0, 1, ...] corresponding to the 1st, 2ndm ... simulated cohort
+        :param alpha: significance level
+        """
+        st = Stat.SummaryStat('', self._survivalTimes[cohort_index])
+        return st.get_t_CI(alpha)
+
+    def get_all_mean_survival(self):
+        """ :returns a list of mean survival time for all simulated cohorts"""
+        return self._meanSurvivalTimes
+
+    def get_overall_mean_survival(self):
+        """ :returns the overall mean survival time (the mean of the mean survival time of all cohorts)"""
+        return self._sumStat_meanSurvivalTime.get_mean()
+
+    def get_cohort_PI_survival(self, cohort_index, alpha):
+        """ :returns: the prediction interval of the survival time for a specified cohort
+        :param cohort_index: integer over [0, 1, ...] corresponding to the 1st, 2ndm ... simulated cohort
+        :param alpha: significance level
+        """
+        st = Stat.SummaryStat('', self._survivalTimes[cohort_index])
+        return st.get_PI(alpha)
+
+    def get_PI_mean_survival(self, alpha):
+        """ :returns: the prediction interval of the mean survival time"""
+        return self._sumStat_meanSurvivalTime.get_PI(alpha)
