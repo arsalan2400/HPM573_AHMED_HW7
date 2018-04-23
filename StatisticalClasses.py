@@ -2,8 +2,7 @@ import sys
 import numpy as numpy
 import scipy.stats as stat
 import math
-
-from scr import FormatFunctions as Support
+import FormatFunctions as Support
 
 
 class Statistics(object):
